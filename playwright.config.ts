@@ -25,7 +25,7 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: 'https://opensource-demo.orangehrmlive.com',
+    baseURL: 'http://localhost:8080',
     trace: 'on-first-retry',
     navigationTimeout: 60000, // 60 seconds for actions
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
