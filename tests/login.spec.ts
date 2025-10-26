@@ -20,6 +20,7 @@ if (!password) throw new Error('PASSWORD not set');
 test('login test', async ({ page }) => {
   await page.goto('/web/index.php/auth/login');
   await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(5000); // Additional wait for dynamic content
   // Fill in username
   await page.locator('input[name="username"]').fill(username);
 
@@ -43,6 +44,7 @@ if (!invalidPassword) throw new Error('INVALID PASSWORD not set');
 test('negative login test for invalid username', async ({ page }) => {
     await page.goto('/web/index.php/auth/login');
     await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(5000); // Additional wait for dynamic content
   // Fill in invalid username
   await page.locator('input[name="username"]').fill(invalidUsername);
 
@@ -60,6 +62,7 @@ test('negative login test for invalid username', async ({ page }) => {
 test('negative login test for invalid password', async ({ page }) => {
     await page.goto('/web/index.php/auth/login');
     await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(5000); // Additional wait for dynamic content
   // Fill in valid username
   await page.locator('input[name="username"]').fill(username);
 
