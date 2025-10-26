@@ -16,6 +16,7 @@ const username = process.env.ORANGE_HRM_USERNAME;
 if (!username) throw new Error('USERNAME not set');
 const password = process.env.ORANGE_HRM_PASSWORD;
 if (!password) throw new Error('PASSWORD not set');
+
 // Positive login test
 test('login test', async ({ page }) => {
   await page.goto('/web/index.php/auth/login');
@@ -40,6 +41,7 @@ const invalidUsername = process.env.ORANGE_HRM_INVALID_USERNAME;
 if (!invalidUsername) throw new Error('INVALID USERNAME not set');
 const invalidPassword = process.env.ORANGE_HRM_INVALID_PASSWORD;
 if (!invalidPassword) throw new Error('INVALID PASSWORD not set');
+
 // Negative login test for invalid username
 test('negative login test for invalid username', async ({ page }) => {
     await page.goto('/web/index.php/auth/login');
@@ -74,4 +76,18 @@ test('negative login test for invalid password', async ({ page }) => {
 
   // Expect an error message to be visible
   await expect(page.locator('.oxd-alert-content-text')).toHaveText('Invalid credentials');
+});
+
+// Negative login test for empty credentials
+test('negative login test for empty credentials', async ({ page }) => {
+    await page.goto('/web/index.php/auth/login');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(5000); // Additional wait for dynamic content
+  // Leave username and password fields empty
+
+  // Click login button
+  await page.locator('button[type="submit"]').click();
+
+  // Expect an error message to be visible
+  await expect(page.locator('.oxd-input-field-error-message')).toBeVisible();
 });
