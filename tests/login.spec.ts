@@ -1,4 +1,4 @@
-import { test, expect, chromium } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -89,5 +89,5 @@ test('negative login test for empty credentials', async ({ page }) => {
   await page.locator('button[type="submit"]').click();
 
   // Expect an error message to be visible
-  await expect(page.locator('.oxd-input-field-error-message')).toBeVisible();
+  await expect(page.locator('.oxd-input-field-error-message')).toHaveCount(2);
 });
