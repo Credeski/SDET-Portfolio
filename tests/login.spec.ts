@@ -18,7 +18,8 @@ const password = process.env.ORANGE_HRM_PASSWORD;
 if (!password) throw new Error('PASSWORD not set');
 // Positive login test
 test('login test', async ({ page }) => {
-  await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
+  await page.goto('/web/index.php/auth/login');
+  await page.waitForLoadState('networkidle');
   // Fill in username
   await page.locator('input[name="username"]').fill(username);
 
@@ -31,7 +32,7 @@ test('login test', async ({ page }) => {
   // Expect to be logged in by checking for the presence of the dashboard
   await expect(page.locator('h6:has-text("Dashboard")')).toBeVisible();
 
-}); 
+});
 
 
 const invalidUsername = process.env.ORANGE_HRM_INVALID_USERNAME;
@@ -40,7 +41,8 @@ const invalidPassword = process.env.ORANGE_HRM_INVALID_PASSWORD;
 if (!invalidPassword) throw new Error('INVALID PASSWORD not set');
 // Negative login test for invalid username
 test('negative login test for invalid username', async ({ page }) => {
-    await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
+    await page.goto('/web/index.php/auth/login');
+    await page.waitForLoadState('networkidle');
   // Fill in invalid username
   await page.locator('input[name="username"]').fill(invalidUsername);
 
@@ -56,7 +58,8 @@ test('negative login test for invalid username', async ({ page }) => {
 
 // Negative login test for invalid password
 test('negative login test for invalid password', async ({ page }) => {
-    await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
+    await page.goto('/web/index.php/auth/login');
+    await page.waitForLoadState('networkidle');
   // Fill in valid username
   await page.locator('input[name="username"]').fill(username);
 
