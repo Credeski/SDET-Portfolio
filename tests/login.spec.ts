@@ -42,10 +42,10 @@ if (!invalidPassword) throw new Error('INVALID PASSWORD not set');
 test('negative login test for invalid username', async ({ page }) => {
     await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
   // Fill in invalid username
-  await page.locator('input[name="username"]').fill('invalidUser');
+  await page.locator('input[name="username"]').fill(invalidUsername);
 
   // Fill in valid password
-  await page.locator('input[name="password"]').fill('password');
+  await page.locator('input[name="password"]').fill(password);
 
   // Click login button
   await page.locator('button[type="submit"]').click();
@@ -58,10 +58,10 @@ test('negative login test for invalid username', async ({ page }) => {
 test('negative login test for invalid password', async ({ page }) => {
     await page.goto('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
   // Fill in valid username
-  await page.locator('input[name="username"]').fill('username');
+  await page.locator('input[name="username"]').fill(username);
 
   // Fill in invalid password
-  await page.locator('input[name="password"]').fill('invalidPassword');
+  await page.locator('input[name="password"]').fill(invalidPassword);
 
   // Click login button
   await page.locator('button[type="submit"]').click();
