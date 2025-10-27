@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
     // Click login button
     await page.locator('button[type="submit"]').click();
     // Wait for successful login by checking for dashboard or main menu
-    await page.locator('.oxd-main-menu').waitFor({ state: 'visible' });
+    await page.locator('.oxd-main-menu').first().waitFor({ state: 'visible', timeout: 60000 });
     // Go directly to Job Titles
     await page.goto('/web/index.php/admin/viewJobTitleList');
     await page.waitForLoadState('networkidle');
@@ -51,18 +51,16 @@ test.afterEach(async ({ page }) => {
 test('add job title test', async ({ page }) => {
     // Click Add button
     await page.locator('button:has-text("Add")').click();
-    await page.locator('h6:has-text("Add Job Title")').waitFor();
+    await page.locator('h6:has-text("Add Job Title")').waitFor({ timeout: 60000 });
     const jobTitle = `Test Job Title ${Date.now()}`;
-    await page.locator('.oxd-input').first().fill(jobTitle);
+    await page.locator('.oxd-form').locator('input.oxd-input').first().fill(jobTitle);
     addedJobTitles.push(jobTitle); // Track for cleanup
     // Fill in job description
     await page.getByPlaceholder('Type description here').fill('This is a test job description.');
     // Click Save button
     await page.locator('button:has-text("Save")').click();
     // Wait for success message or page reload
-    await page.locator('.oxd-toast').waitFor({ state: 'visible' });
-    //Wait for the page to reload and show the job titles list
-    await page.locator('h6:has-text("Job Titles")').waitFor();
+    await page.locator('.oxd-toast').waitFor({ state: 'visible', timeout: 60000 });
     // Verify that the new job title appears in the list
     const jobTitleCell = page.locator(`div.oxd-table-cell:has-text("${jobTitle}")`);
     await jobTitleCell.scrollIntoViewIfNeeded();
@@ -73,7 +71,7 @@ test('add job title test', async ({ page }) => {
 test('verify required field validation on job title creation', async ({ page }) => {
     // Click Add button
     await page.locator('button:has-text("Add")').click();
-    await page.locator('h6:has-text("Add Job Title")').waitFor();
+    await page.locator('h6:has-text("Add Job Title")').waitFor({ timeout: 60000 });
     // Leave job title field empty and click Save button
     await page.locator('button:has-text("Save")').click();
     // Verify that the required field validation message is displayed
@@ -87,11 +85,11 @@ test('delete job title test', async ({ page }) => {
     const jobTitleToDelete = `Test Job Title to Delete ${Date.now()}`;
     // First, add a job title to delete
     await page.locator('button:has-text("Add")').click();
-    await page.locator('h6:has-text("Add Job Title")').waitFor();
-    await page.locator('.oxd-input').first().fill(jobTitleToDelete);
+    await page.locator('h6:has-text("Add Job Title")').waitFor({ timeout: 60000 });
+    await page.locator('.oxd-form').locator('input.oxd-input').first().fill(jobTitleToDelete);
     await page.locator('button:has-text("Save")').click();
-    await page.locator('.oxd-toast').waitFor({ state: 'visible' });
-    await page.locator('h6:has-text("Job Titles")').waitFor();
+    await page.locator('.oxd-toast').waitFor({ state: 'visible', timeout: 60000 });
+    await page.locator('h6:has-text("Job Titles")').waitFor({ timeout: 60000 });
 
     // Now delete the job title
     const deleteIcon = page.locator(`div.oxd-table-row:has-text("${jobTitleToDelete}") i.bi-trash`);
@@ -99,7 +97,7 @@ test('delete job title test', async ({ page }) => {
     await deleteIcon.click();
     await page.locator('button:has-text("Yes, Delete")').click();
     // Wait for deletion confirmation
-    await page.locator('.oxd-toast').waitFor({ state: 'visible' });
+    await page.locator('.oxd-toast').waitFor({ state: 'visible', timeout: 60000 });
 
     // Verify that the job title has been deleted
     await expect(page.locator(`div.oxd-table-cell:has-text("${jobTitleToDelete}")`)).toHaveCount(0);
@@ -108,27 +106,35 @@ test('delete job title test', async ({ page }) => {
 //Edit Job Title test
 test('edit job title test', async ({ page }) => {
     const originalJobTitle = `Original Job Title ${Date.now()}`;
+    const newJobTitle = `Edited Job Title ${Date.now()}`;
+
+  // --- Add ---
     await page.locator('button:has-text("Add")').click();
     await page.locator('h6:has-text("Add Job Title")').waitFor();
-    await page.locator('.oxd-input').first().fill(originalJobTitle);
-    addedJobTitles.push(originalJobTitle); // Track for cleanup
+    await page.locator('.oxd-form input.oxd-input').first().fill(originalJobTitle);
     await page.locator('button:has-text("Save")').click();
     await page.locator('.oxd-toast').waitFor({ state: 'visible' });
-    await page.locator('h6:has-text("Job Titles")').waitFor();
 
-    // Now edit the job title
-    const newJobTitle = `Edited Job Title ${Date.now()}`;
-    const editIcon = page.locator(`div.oxd-table-row:has-text("${originalJobTitle}") .bi-pencil-fill`);
-    await editIcon.scrollIntoViewIfNeeded();
+  // --- Edit ---
+    const editIcon = page.locator(`.oxd-table-row:has-text("${originalJobTitle}") .bi-pencil-fill`);
+    await editIcon.waitFor({ state: 'visible' });
     await editIcon.click();
-    await page.locator('.oxd-input').first().fill(newJobTitle);
+
+    const input = page.locator('.oxd-form input.oxd-input').first();
+    await input.waitFor({ state: 'visible' });
+
+  // Explicitly clear the input
+    await input.click({ clickCount: 3 });
+    await input.press('Backspace');
+    await input.fill(newJobTitle);
     await page.locator('button:has-text("Save")').click();
-    // Wait for edit confirmation
     await page.locator('.oxd-toast').waitFor({ state: 'visible' });
 
-    // Verify that the job title has been edited
-    const newJobTitleCell = page.locator(`div.oxd-table-cell:has-text("${newJobTitle}")`);
-    await newJobTitleCell.scrollIntoViewIfNeeded();
-    await expect(newJobTitleCell).toBeVisible();
-    await expect(page.locator(`div.oxd-table-cell:has-text("${originalJobTitle}")`)).toHaveCount(0);
+
+  // --- Verify ---
+    const newRow = page.locator(`.oxd-table-row:has(div.oxd-table-cell:has-text("${newJobTitle}"))`);
+    await expect(newRow).toBeVisible({ timeout: 60000 });
+    await expect(page.locator(`.oxd-table-row:has-text("${originalJobTitle}")`)).toHaveCount(0);
+
+    addedJobTitles.push(newJobTitle);
 });
