@@ -47,7 +47,7 @@ test.afterEach(async ({ page }) => {
 });
 
 
-//Add Job Title test
+// TC001 - Verify that a user can successfully add a new job title 
 test('add job title test', async ({ page }) => {
     // Click Add button
     await page.locator('button:has-text("Add")').click();
@@ -67,7 +67,7 @@ test('add job title test', async ({ page }) => {
     await expect(jobTitleCell).toBeVisible();
 });
 
-//Verify required field validation on job title creation
+// TC003 - Verify required field validation on job title creation
 test('verify required field validation on job title creation', async ({ page }) => {
     // Click Add button
     await page.locator('button:has-text("Add")').click();
@@ -80,7 +80,7 @@ test('verify required field validation on job title creation', async ({ page }) 
     await expect(errorMessage).toHaveText('Required');
 });
 
-//Delete Job Title test
+// TC004 - Verify that a user can delete an existing job title
 test('delete job title test', async ({ page }) => {
     const jobTitleToDelete = `Test Job Title to Delete ${Date.now()}`;
     // First, add a job title to delete
@@ -103,7 +103,7 @@ test('delete job title test', async ({ page }) => {
     await expect(page.locator(`div.oxd-table-cell:has-text("${jobTitleToDelete}")`)).toHaveCount(0);
 });
 
-//Edit Job Title test
+// TC006 - Verify that a user can edit an existing job title
 test('edit job title test', async ({ page }) => {
     const originalJobTitle = `Original Job Title ${Date.now()}`;
     const newJobTitle = `Edited Job Title ${Date.now()}`;

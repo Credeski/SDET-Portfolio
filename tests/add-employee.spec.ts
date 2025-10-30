@@ -99,3 +99,4 @@ test("add employee with login credentials", async ({ page }) => {
     // Verify the employee appears in the list
     await expect(page.locator(`text=LoginFirst${timestamp} LoginLast${timestamp}`)).toBeVisible({ timeout: 15000 });
 });
+
